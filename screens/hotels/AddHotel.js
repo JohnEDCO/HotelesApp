@@ -9,7 +9,7 @@ import Loading from '../../components/Loading'
 /**Este archivo es la ventana que me llama al formulario de crear hotel*/
 export default function AddHotel({navigation}) {
     const toastRef = useRef()
-    const [loadgin, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     return (
         <KeyboardAwareScrollView>
@@ -18,7 +18,7 @@ export default function AddHotel({navigation}) {
                 setLoading={setLoading}
                 navigation={navigation}
             />
-            <Loading isVisible={Loading} text="Creando Hotel..."/>
+            <Loading isVisible={loading} text="Creando Hotel..."/>
             <Toast ref={toastRef} position="center" opacity={0.9}/>
         </KeyboardAwareScrollView>
     )

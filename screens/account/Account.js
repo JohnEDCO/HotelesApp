@@ -20,7 +20,6 @@ export default function Account() {
     if(login == null){
         <Loading isVisible={true} text="Cargando..."/> 
     }
-    console.log("desde acount.js"+login);
     return login ? <UserLogged/> : <UserGuest/> 
 }
 

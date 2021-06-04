@@ -19,7 +19,6 @@ export default function ChangeDisplayNameForm({ displayName, setShowModal, toast
         const result = await updateProfile({ displayName: newDisplayName })
         setLoading(false)
         
-        console.log("status response: -->"+result.statusResponse);
         if (!result.statusResponse) {
             setError("Eror al actualizar nombres y apellidos, intenta más tarde.")
             return
@@ -75,7 +74,8 @@ export default function ChangeDisplayNameForm({ displayName, setShowModal, toast
 const styles = StyleSheet.create({
     view: {
         alignItems: "center",
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderBottomLeftRadius: 30,
     },
     input: {
         marginBottom: 10
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
         width: "95%"
     },
     btn: {
-        backgroundColor: "#c77e2c"
+        backgroundColor: "#c77e2c",
+        borderRadius: 10
     }
 })

@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack'
 
 import TopHotels from '../screens/TopHotels'
 
-// const Stack = createStackNavigator()
+const Stack = createStackNavigator()
 
 export default function TopHotelsStack() {
     return (

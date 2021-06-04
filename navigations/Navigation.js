@@ -6,7 +6,6 @@ import { Icon } from 'react-native-elements'
 import HotelsStack from './HotelsStack'
 import FavoritesStack from './FavoritesStack'
 import AccountStack from './AccountStack'
-import SearchStack from './SearchStack'
 import TopHotelsStack from './TopHotelsStack'
 
 const Tab = createBottomTabNavigator()
@@ -16,7 +15,7 @@ export default function Navigation() {
         let iconName
         switch (route.name) {
             case "hotels":
-                iconName = "compass-outline"
+                iconName = "home-city-outline"
                 break;
             case "favorites":
                 iconName = "heart-outline"
@@ -24,9 +23,6 @@ export default function Navigation() {
             case "account":
                 iconName = "account-outline"
                 break;    
-            case "search":
-                iconName = "magnify"
-                break;
             case "top":
                 iconName = "star-outline"
                 break;    
@@ -70,11 +66,6 @@ export default function Navigation() {
                     name="account"
                     component = {AccountStack}
                     options = {{title: "Cuenta"}}
-                />
-                <Tab.Screen
-                    name="search"
-                    component={SearchStack}
-                    options = {{title: "Buscar"}}
                 />
                 <Tab.Screen
                     name="top"

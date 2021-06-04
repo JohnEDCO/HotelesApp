@@ -10,7 +10,6 @@ export default function InfoUser({user, setloading, setloadingText}) {
 
     const changePhoto = async() => {
         const result = await loadImageFromGallery([1,1])
-        console.log(result);
         if(!result.status){
             return
         }
@@ -18,17 +17,14 @@ export default function InfoUser({user, setloading, setloadingText}) {
         setloading(true)
 
         const resultUploadImage = await uploadImage(result.image, "avatars", user.uid)
-        console.log("resulado upload: "+ resultUploadImage);   
-        console.log("url: "+ resultUploadImage.url);   
+    
         if(!resultUploadImage.statusResponse){
-            console.log("Entrooooooooooo");
             setloading(false)
             Alert.alert("Error al importar la imagen seleccionada")
             return
         }
 
         const resultUpdateProfile = await updateProfile({photoURL: resultUploadImage.url})
-        console.log("resulado update: "+ resultUpdateProfile.statusResponse);   
         setloading(false) 
         if(resultUpdateProfile.statusResponse){
             setPhotoURL(resultUploadImage.url)

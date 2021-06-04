@@ -5,16 +5,15 @@ import firebase from 'firebase/app'
 
 import {firebaseApp} from '../utils/firebase'
 import {fileToBlob} from './helpers'
- 
+import {map} from 'lodash' 
+
 const db = firebase.firestore(firebaseApp)
 
 export const isUserLogged = () => {
     let isLogged = false
     firebase.auth().onAuthStateChanged((user) => {
-        console.log("desde action lo que saca user:"+user);
         user !== null && (isLogged = true)
     })
-    console.log("usuario logueado: "+ isLogged);
     return isLogged
 }
 /**Funcion que me trae todo lo del usuario que esta logueado en el momento */
@@ -113,4 +112,199 @@ export const updatePassword = async(password) => {
         result.error = error
     }
     return result     
+}
+/**Funcion para subir a cualquier collecion la informacion del hotel que enviamos por medio de el parametro data*/
+export const addDocumentWithoutId = async(collection, data) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection(collection).add(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion para traer los hoteles que se han registrado por los usuarios en general*/
+export const getHotels = async(limitHotels) => {
+    const result = { statusResponse: true, error: null, hotels: [], startHotel: null}
+    try {
+        const response = await db
+            .collection("hotels")
+            .orderBy("createAt", "desc")
+            .limit(limitHotels).get()
+
+        if(response.docs.length > 0){
+            result.startHotel = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const hotel = doc.data()
+            hotel.id = doc.id
+            result.hotels.push(hotel)
+        });
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que nos retorna mas Hoteles*/
+export const getMoreHotels = async(limitHotels, startHotel) => {
+    const result = { statusResponse: true, error: null, hotels: [], startHotel: null}
+    try {
+        const response = await db
+            .collection("hotels")
+            .orderBy("createAt", "desc")
+            .startAfter(startHotel.data().createAt)
+            .get()
+            
+        if(response.docs.length > 0){
+            result.startHotel = response.docs[response.docs.length - 1]
+        }
+        response.forEach((doc) => {
+            const hotel = doc.data()
+            hotel.id = doc.id
+
+            result.hotels.push(hotel)
+        });
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+/**Funcion que me trae un documento de cualquier collecion por el id que le pasemos por parametro */
+export const getDocumentById = async(collection, id) => {
+    const result = { statusResponse: true, error: null, document: null }
+    try {
+        const response = await db.collection(collection).doc(id).get()
+        result.document = response.data()
+        result.document.id = response.id
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que me  documento de cualquier collecion por el id que le pasemos por parametro */
+export const updateDocumentoById = async(collection, id, data) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection(collection).doc(id).update(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion para traer los comentarios que se han hecho al hotel*/
+export const getHotelComments = async(id) => {
+    const result = { statusResponse: true, error: null, comments: []}
+    try {
+        const response = await db
+            .collection("comments")
+            .where("idHotel", "==", id)
+            .get()
+
+        response.forEach((doc) => {
+            const comment = doc.data()
+            comment.id = doc.id
+            result.comments.push(comment)
+        });
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que me verifica si un hotel esta añadido a favoritos, se le envia el id del hotel al que se accede */
+export const getIsFavorite = async(idHotel) => {
+    const result = { statusResponse: true, error: null, isFavorite: false }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idHotel", "==", idHotel)
+            .where("idUser", "==", getCurrentUser().uid)
+            .get()
+        result.isFavorite = response.docs.length > 0
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que me elimina de favoritos un Hotel añadido por el usuario que esta logueado*/
+export const discardFavorite = async(idHotel) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idHotel", "==", idHotel)
+            .where("idUser", "==", getCurrentUser().uid)
+            .get()
+        response.forEach(async(doc) => {
+            const favoriteId = doc.id
+            await db.collection("favorites").doc(favoriteId).delete()
+        })    
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que me trae todos los hoteles añadidos a favorito por el usuario que esta logueado*/
+export const getFavorites = async() => {
+    const result = { statusResponse: true, error: null, favorites: [] }
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idUser", "==", getCurrentUser().uid)
+            .get()
+        
+        const IdsHotels = []
+
+        response.forEach((doc) => {
+            const favorite = doc.data()
+            IdsHotels.push(favorite.idHotel)
+        })    
+        await Promise.all(
+            map(IdsHotels, async(IdHotel)=>{
+                const responseHotels = await getDocumentById("hotels", IdHotel)
+                if(responseHotels.statusResponse){
+                    result.favorites.push(responseHotels.document)
+                }
+            })
+        )
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+/**Funcion que me verifica si un hotel esta añadido a favoritos, se le envia el id del hotel al que se accede */
+export const getRankingHotels = async(limitRanking) => {
+    const result = { statusResponse: true, error: null, hotels: [] }
+    try {
+        const response = await db
+            .collection("hotels")
+            .orderBy("rating", "desc")
+            .limit(limitRanking)
+            .get()
+        response.forEach((doc) => {
+            const hotel = doc.data()
+            hotel.id = doc.id
+            result.hotels.push(hotel)
+        })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result    
 }

@@ -1,10 +1,15 @@
 import React,{useState} from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, ScrollView,Alert } from 'react-native'
 import {Input} from 'react-native-elements'
-import {Button,Icon, Avatar} from 'react-native-elements'
-import {map, size, filter} from 'lodash'
+import {Button,Icon, Avatar,Image} from 'react-native-elements'
+import {map, size, filter, isEmpty} from 'lodash'
+import uuid from 'random-uuid-v4'
+
 import { loadImageFromGallery } from '../../utils/helpers'
-import { Alert } from 'react-native'
+import {addDocumentWithoutId, getCurrentUser, uploadImage} from '../../utils/actions'
+
+/**constante para saber las dimensiones de la pantalla */
+const widthScreen = Dimensions.get("window").width
 
 /**Este archivo contiene los elemento del formulario para agregar un nuevo hotel */
 /**Recibe el toast para mostrar un mensaje tipo toast */
@@ -17,12 +22,92 @@ export default function AddHotelForm({toastRef, setLoading, navigation}) {
     const [imagesSelected, setImagesSelected] = useState([])
 
     /**esta constante con funcion flecha nos agrega el hotel al firebase*/
-    const addHotel = ()=>{
-        console.log(formData)
+    const addHotel = async()=>{
+        if(!validForm()){
+            return
+        }
+        setLoading(true)
+        const responseUploadImages = await upLoadImagesForm()
+
+        /**creo una constante de objeto para tener la informacion del hotel y enviarlo a la bd de firebase */
+        const hotel = {
+            name: formData.name,
+            address: formData.address,
+            phone: formData.phone,
+            description: formData.description,
+            images: responseUploadImages,
+            rating: 0,
+            ratingTotal: 0,
+            quantityVotes:0,
+            numberVotes: 0,
+            createAt: new Date(),
+            createBy: getCurrentUser().uid,
+        }
+
+        const responseAddDocument = await addDocumentWithoutId("hotels", hotel)
+        setLoading(false)
+
+        if(!responseAddDocument.statusResponse){
+            toastRef.current.show("Error al grabar el hotel, intenta de nuevo")
+            return
+        }
+        navigation.navigate("hotels")
     }
 
+    /**Funcion flecha que me sube las imagens que tengo seleccionada en el form a firebase */
+    const upLoadImagesForm = async() =>{
+        const imagesUrl = []
+        await Promise.all(
+            map(imagesSelected, async(image) =>{
+                const response = await uploadImage(image, "hotels", uuid())
+                if(response.statusResponse){
+                    imagesUrl.push(response.url)
+                }
+            })
+        )
+        return imagesUrl
+    }
+
+    const validForm= ()=> {
+
+        clearErrors()
+        let isValid = true
+
+        if(isEmpty(formData.name)){
+            setErrorName("Debes ingresar el nombre del hotel")
+            isValid= false
+        }
+        if(isEmpty(formData.address)){
+            setErrorAddress("Debes ingresar la direccion del hotel")
+            isValid= false
+        }
+        if(size(formData.phone) < 10){
+            setErrorPhone("Debes ingresar un telefono de contacto")
+            isValid= false
+        }
+        if(isEmpty(formData.description)){
+            setErrorDescription("La descripcion es muy importante para los usuarios, ingresa una porfavor")
+            isValid= false
+        }
+        if(size(imagesSelected) === 0){
+            toastRef.current.show("Debes ingresar al menos una imagen del hotel")
+            isValid= false
+        }
+
+        return isValid
+    }
+    /**funcion flecha para limpiar los campos de errors, para evitar mensajes de errores no deseados */
+    const clearErrors= () =>{
+        setErrorAddress(null)
+        setErrorDescription(null)
+        setErrorName(null)
+        setErrorPhone(null)
+    }
     return (
         <ScrollView  style={styles.viewContainer}>
+            <ImageHotel
+                imageHotel= {imagesSelected[0]}
+            />
             <FormAdd
                 formData = {formData}
                 setFormData ={setFormData}
@@ -46,6 +131,22 @@ export default function AddHotelForm({toastRef, setLoading, navigation}) {
         </ScrollView>
     )
 }
+/**funcion flecha que tiene un componente interno y nos devuelve la imagen del hotel */
+function ImageHotel({imageHotel}){
+    return (
+        <View style={styles.viewPhoto}
+        >
+            <Image
+                style={styles.imageStyle}
+                source = {
+                    imageHotel ?
+                    {uri: imageHotel}
+                    : require('../../assets/no-image.jpg')
+                }
+            />
+        </View>
+    )
+}
 /**Funcion(componente) que contiene los componentes para subir imagenes de hoteles*/
 function UploadImageHotel({toastRef, imagesSelected, setImagesSelected}){
 
@@ -58,8 +159,27 @@ function UploadImageHotel({toastRef, imagesSelected, setImagesSelected}){
         }
         setImagesSelected([...imagesSelected, response.image])
     }
-    const removeImage = (image) =>{
-        Alert.alert()
+    /**funcion flecha para remover una imagen de las que se seleccionaron de la galleria para subir */
+    const removeImage = (image) => {
+        Alert.alert(
+            "Eliminar Imagen",
+            "¿Estas seguro que quieres eliminar la imagen?",
+            [
+                {
+                    text: "No",
+                    style: "cancel"                    
+                },
+                {
+                    text: "Sí",
+                    onPress: () => {
+                        setImagesSelected(
+                            filter(imagesSelected, (imageUrl) => imageUrl !== image)
+                        )
+                    }
+                }
+            ],
+            { cancelable: false }
+        )
     }
     return (
         <ScrollView
@@ -83,6 +203,7 @@ function UploadImageHotel({toastRef, imagesSelected, setImagesSelected}){
                         key={index}
                         style={styles.miniatureStyle}
                         source={{uri: imageHotel}}
+                        onPress={()=>removeImage(imageHotel)}
                     />
                 ))
             }
@@ -133,17 +254,17 @@ function FormAdd({formData,setFormData,errorName,errorPhone,errorAddress,errorDe
 /**Constante que me retorna los valores por defecto para mandar al formData */
 const defaultFormValues = () => {
     return {
-        name: "na",
-        description: "des",
-        phone: "ph",
-        address: "ad",
+        name: "",
+        description: "",
+        phone: "",
+        address: "",
     }
 }
 /**Estilos de los componentes */
 const styles = StyleSheet.create({
     viewContainer:{
         height: "100%",
-        marginTop: 30
+        
     },
     viewForm: {
         marginHorizontal: 10,
@@ -185,5 +306,13 @@ const styles = StyleSheet.create({
         height: 70,
         marginRight: 10
     },
-    
+    imageStyle: {
+        width: widthScreen,
+        height: 200
+    },
+    viewPhoto: {
+        alignItems: "center",
+        height: 200,
+        marginBottom: 20,
+    }
 })

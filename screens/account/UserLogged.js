@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, ScrollView } from 'react-native'
 import {Button} from 'react-native-elements'
 import {useNavigation} from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
@@ -24,7 +24,7 @@ export default function UserLogged() {
     }, [relodUser])
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {
                 user && (
                     <View>
@@ -42,13 +42,18 @@ export default function UserLogged() {
                     )
             }
             <Button
-                title= "Cerrar sesion"
                 buttonStyle={styles.btnCloseSession}
                 titleStyle={styles.btnCloseSessionTitle}
                 onPress = {() => {
                     closeSession()
                     navigation.navigate('hotels')
-                } }
+                }}
+                icon={{
+                    type: "material-community",
+                    name: "logout",
+                    color:"#c77e2c",
+                    size: 60
+                }}
             />
             <Toast
                 ref={toastRef}
@@ -59,7 +64,7 @@ export default function UserLogged() {
                 isVisible= {loading}
                 text={loadingText}
             />
-        </View>
+        </ScrollView>
     )
 }
 
@@ -69,14 +74,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#f9f9f9"
     },
     btnCloseSession: {
-        marginTop: 30,
-        borderRadius: 5,
-        backgroundColor: "white",
-        borderTopWidth: 1,
-        borderTopColor: "#c77e2c",
-        borderBottomWidth:1,
-        borderBottomColor: "#c77e2c",
-        paddingVertical: 10
+        alignItems: "center",
+        backgroundColor:"transparent",
+        margin: 250,
+        marginTop: 20,
+        marginLeft: 65,
+        right: -80
     },
     btnCloseSessionTitle: {
         color: "#c77e2c",
