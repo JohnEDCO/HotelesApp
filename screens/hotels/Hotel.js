@@ -130,16 +130,17 @@ export default function Hotel({navigation, route}) {
                 />
             </Card>
             {
-                    !userLogged &&(
+                    !userLogged &&( 
                         <Text 
                             style={styles.mustLoginText}
-                            onPress={() => navigation.navigate("login")}
+                            onPress={() => navigation.navigate("account", { screen: "login" })}
                         >
                             Para comentar debes iniciar sesion con tu cuenta.{" "}
                             <Text style={styles.loginText}>
                                 Iniciar Sesion
                             </Text>
                         </Text>
+
                             )
             }   
             <Card containerStyle={styles.cardContainer}>

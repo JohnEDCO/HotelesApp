@@ -9,7 +9,7 @@ import AccountStack from './AccountStack'
 import TopHotelsStack from './TopHotelsStack'
 
 const Tab = createBottomTabNavigator()
-
+/**Esta funcion es la navegacion principal, es el menu que aparece en la parte inferior de la aplicacion */
 export default function Navigation() {
     const screenOptions = (route, color) =>{
         let iconName
@@ -19,13 +19,13 @@ export default function Navigation() {
                 break;
             case "favorites":
                 iconName = "heart-outline"
-                break;
-            case "account":
-                iconName = "account-outline"
-                break;    
+                break; 
             case "top":
                 iconName = "star-outline"
                 break;    
+            case "account":
+                iconName = "account-outline"
+                break;   
             default:
                 break;
         }
@@ -63,15 +63,15 @@ export default function Navigation() {
                     options = {{title: "Favoritos"}}
                 />
                 <Tab.Screen
-                    name="account"
-                    component = {AccountStack}
-                    options = {{title: "Cuenta"}}
-                />
-                <Tab.Screen
                     name="top"
                     component = {TopHotelsStack}
                     options = {{title: "Mejores Hoteles"}}
                     
+                />
+                <Tab.Screen
+                    name="account"
+                    component = {AccountStack}
+                    options = {{title: "Cuenta"}}
                 />
             </Tab.Navigator>
         </NavigationContainer>

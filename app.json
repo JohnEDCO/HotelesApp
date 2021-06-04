@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "restaurantsApp",
-    "slug": "restaurantsApp",
+    "name": "HotelsApp",
+    "slug": "HotelsApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,11 +14,8 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -27,12 +24,13 @@
       "permissions": [
         "CAMERA_ROLL",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "USER_FACING_NOTIFICATIONS"
-      ]
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.johnedco.HotelsApp"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.johnedco.HotelsApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -54,7 +54,7 @@ function Hotel({hotel, navigation}){
                             <Text style={styles.hotelPhone}>{formatPhone(phone)}</Text>
                             <Text style={styles.hotelDescription}>
                                 {
-                                    size(description) > 40 ?
+                                    size(description) > 40 ? 
                                     `${description.substr(0, 40)}...`
                                     : description
                                 }
@@ -87,10 +87,12 @@ const styles = StyleSheet.create({
     },
     hotelAddress: {
         paddingTop: 2,
+        paddingRight: 4,
         color: "gray"
     },
     hotelDescription: {
         paddingTop: 2,
+        paddingRight: 5,
         color: "gray",
         width: "75%"
     },

@@ -113,7 +113,7 @@ export const updatePassword = async(password) => {
     }
     return result     
 }
-/**Funcion para subir a cualquier collecion la informacion del hotel que enviamos por medio de el parametro data*/
+/**Funcion para subir a cualquier collecion la informacion que se envia por el parametro data*/
 export const addDocumentWithoutId = async(collection, data) => {
     const result = { statusResponse: true, error: null }
     try {
@@ -188,7 +188,7 @@ export const getDocumentById = async(collection, id) => {
     return result     
 }
 
-/**Funcion que me  documento de cualquier collecion por el id que le pasemos por parametro */
+/**Funcion que me actualiza un documento de cualquier collecion por el id que le pasemos por parametro */
 export const updateDocumentoById = async(collection, id, data) => {
     const result = { statusResponse: true, error: null }
     try {

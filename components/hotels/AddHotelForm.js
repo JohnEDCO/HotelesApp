@@ -141,7 +141,7 @@ function ImageHotel({imageHotel}){
                 source = {
                     imageHotel ?
                     {uri: imageHotel}
-                    : require('../../assets/no-image.jpg')
+                    : require('../../assets/no-image.png')
                 }
             />
         </View>

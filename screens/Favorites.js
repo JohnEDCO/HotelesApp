@@ -38,10 +38,7 @@ export default function Favorites({navigation}) {
     if (!userLogged) {
         return <UserNoLogged navigation={navigation}/>
     }
-
-    if (!hotels) {
-        return <Loading isVisible={true} text="Cargando Hoteles..."/>
-    } else if(hotels?.length === 0){
+    if(hotels?.length === 0){
         return <NotFoundHotels/>
     }
 
@@ -66,7 +63,7 @@ export default function Favorites({navigation}) {
                     <View >
                         <ActivityIndicator size="large"/>
                         <Text style={{ textAlign: "center"}}>
-                            Cargando Hoteles...
+                            .Cargando Hoteles...
                         </Text>
                     </View>
                 )
@@ -130,8 +127,6 @@ function Hotel({hotel,setLoading, toastRef,navigation, setReloadData}) {
         } else {
             toastRef.current.show("Error al descartar el hotel", 3000)
         }
-        // setReloadData(true)
-
     }
 
     return(

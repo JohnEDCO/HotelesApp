@@ -20,9 +20,6 @@ function Hotel({ hotel, navigation }) {
     const [iconColor, setIconColor] = useState("#cd7f32")
 
 
-    // b9f2ff
-    // #e3e4e5
-    // #cd7f32
     useEffect(() => {
         if (hotel.index === 0) {
             setIconColor("#b9f2ff")

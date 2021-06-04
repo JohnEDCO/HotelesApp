@@ -82,7 +82,7 @@ export default function Hotels({navigation}) {
                 onPress= {()=> navigation.navigate("add-hotel")}
                 />
             }
-            <Loading isVisible={loading} text="Cargando Hoteles..."/>
+            <Loading isVisible={loading} text="Cargando Hoteles ..."/>
         </View>
     )
 }

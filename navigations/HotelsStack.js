@@ -7,7 +7,7 @@ import AddHotel from '../screens/hotels/AddHotel'
 import AddCommentHotel from '../screens/hotels/AddCommentHotel'
 
 const Stack = createStackNavigator()
-
+/**navegacion del hotel y los screen */
 export default function HotelsStack() {
     
     return (

@@ -4,7 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack'
 import TopHotels from '../screens/TopHotels'
 
 const Stack = createStackNavigator()
-
+/**navegacion del ranking de hoteles */
 export default function TopHotelsStack() {
     return (
         <Stack.Navigator>

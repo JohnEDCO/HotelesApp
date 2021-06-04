@@ -6,7 +6,7 @@ import Login from '../screens/account/Login'
 import Register from '../screens/account/Register'
 
 const Stack = createStackNavigator()
-
+/**Navegacion de la cuenta */
 export default function AccountStack() {
     return (
         <Stack.Navigator>

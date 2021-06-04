@@ -35,6 +35,8 @@ export default function RegisterForm() {
             setErrorEmail(result.error)
             return
         }
+        setLoading(false)
+        console.log("Cargandoo consoleeeeeeeeeeeeee");
         navigation.navigate("account")
     }
 
@@ -129,10 +131,20 @@ const defaultValuesForm = ()=>{
 }
 const styles = StyleSheet.create({
     form: {
-        marginTop: 30
+        marginHorizontal: 25,
+        backgroundColor:"white",
+        borderRadius: 30,
+        width: 335,
+        height: 370,
+        borderWidth:2,
+        borderColor: "#e2e2e5",
+        borderRightWidth: 8, 
+        borderRightColor: "#e2e2e5",
+        padding: 27
     },
     input: {
-        width: "100%"
+        width: "100%",
+        margin: 7
     },
     btnContainer: {
         marginTop: 20,
